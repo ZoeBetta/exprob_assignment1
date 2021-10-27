@@ -1,0 +1,207 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.emarolab.it/cluedo-ontology#"
+     xml:base="http://www.emarolab.it/cluedo-ontology"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:webprotege="http://webprotege.stanford.edu/"
+     xmlns:cluedo-ontology="http://www.emarolab.it/cluedo-ontology#">
+    <owl:Ontology rdf:about="http://www.emarolab.it/cluedo-ontology"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotation properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://webprotege.stanford.edu/RqGewjkHNUnvbD47Swc3PQ -->
+
+    <owl:AnnotationProperty rdf:about="http://webprotege.stanford.edu/RqGewjkHNUnvbD47Swc3PQ">
+        <rdfs:label xml:lang="en">PERSON</rdfs:label>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.emarolab.it/cluedo-ontology#what -->
+
+    <owl:ObjectProperty rdf:about="http://www.emarolab.it/cluedo-ontology#what">
+        <rdfs:domain rdf:resource="http://www.emarolab.it/cluedo-ontology#HYPOTHESIS"/>
+        <rdfs:range rdf:resource="http://www.emarolab.it/cluedo-ontology#WEAPON"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.emarolab.it/cluedo-ontology#where -->
+
+    <owl:ObjectProperty rdf:about="http://www.emarolab.it/cluedo-ontology#where">
+        <rdfs:domain rdf:resource="http://www.emarolab.it/cluedo-ontology#HYPOTHESIS"/>
+        <rdfs:range rdf:resource="http://www.emarolab.it/cluedo-ontology#PLACE"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.emarolab.it/cluedo-ontology#who -->
+
+    <owl:ObjectProperty rdf:about="http://www.emarolab.it/cluedo-ontology#who">
+        <rdfs:domain rdf:resource="http://www.emarolab.it/cluedo-ontology#HYPOTHESIS"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.emarolab.it/cluedo-ontology#hasID -->
+
+    <owl:DatatypeProperty rdf:about="http://www.emarolab.it/cluedo-ontology#hasID">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://www.emarolab.it/cluedo-ontology#HYPOTHESIS"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.emarolab.it/cluedo-ontology#COMPLETED -->
+
+    <owl:Class rdf:about="http://www.emarolab.it/cluedo-ontology#COMPLETED">
+        <rdfs:subClassOf rdf:resource="http://www.emarolab.it/cluedo-ontology#HYPOTHESIS"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.emarolab.it/cluedo-ontology#HYPOTHESIS -->
+
+    <owl:Class rdf:about="http://www.emarolab.it/cluedo-ontology#HYPOTHESIS">
+        <rdfs:comment rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PLAUSIBLE hypothesis are the one that are COMPLITED and NOT INCONSISTENT.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.emarolab.it/cluedo-ontology#INCONSISTENT -->
+
+    <owl:Class rdf:about="http://www.emarolab.it/cluedo-ontology#INCONSISTENT">
+        <rdfs:subClassOf rdf:resource="http://www.emarolab.it/cluedo-ontology#COMPLETED"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.emarolab.it/cluedo-ontology#PERSON -->
+
+    <owl:Class rdf:about="http://www.emarolab.it/cluedo-ontology#PERSON"/>
+    
+
+
+    <!-- http://www.emarolab.it/cluedo-ontology#PLACE -->
+
+    <owl:Class rdf:about="http://www.emarolab.it/cluedo-ontology#PLACE"/>
+    
+
+
+    <!-- http://www.emarolab.it/cluedo-ontology#WEAPON -->
+
+    <owl:Class rdf:about="http://www.emarolab.it/cluedo-ontology#WEAPON"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://webprotege.stanford.edu/R9M9lzBDFPhuN86Iaptiq9u -->
+
+    <owl:NamedIndividual rdf:about="http://webprotege.stanford.edu/R9M9lzBDFPhuN86Iaptiq9u">
+        <rdf:type rdf:resource="http://www.emarolab.it/cluedo-ontology#WEAPON"/>
+        <rdfs:label xml:lang="en">knife</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://webprotege.stanford.edu/RBJaKppD43hYexNj8rjypH -->
+
+    <owl:NamedIndividual rdf:about="http://webprotege.stanford.edu/RBJaKppD43hYexNj8rjypH">
+        <rdf:type rdf:resource="http://www.emarolab.it/cluedo-ontology#PERSON"/>
+        <rdfs:label xml:lang="en">Jhon</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://webprotege.stanford.edu/RBhr45dKg97jgoNyJTVO2Ka -->
+
+    <owl:NamedIndividual rdf:about="http://webprotege.stanford.edu/RBhr45dKg97jgoNyJTVO2Ka">
+        <rdf:type rdf:resource="http://www.emarolab.it/cluedo-ontology#PERSON"/>
+        <rdfs:label xml:lang="en">mark</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://webprotege.stanford.edu/RCOc5PxVjq8KonbOELfHwvy -->
+
+    <owl:NamedIndividual rdf:about="http://webprotege.stanford.edu/RCOc5PxVjq8KonbOELfHwvy">
+        <rdf:type rdf:resource="http://www.emarolab.it/cluedo-ontology#PLACE"/>
+        <rdfs:label xml:lang="en">Livingroom</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://webprotege.stanford.edu/RI9joQvzf9Ha57JvmofXK -->
+
+    <owl:NamedIndividual rdf:about="http://webprotege.stanford.edu/RI9joQvzf9Ha57JvmofXK">
+        <rdf:type rdf:resource="http://www.emarolab.it/cluedo-ontology#HYPOTHESIS"/>
+        <what rdf:resource="http://webprotege.stanford.edu/R9M9lzBDFPhuN86Iaptiq9u"/>
+        <where rdf:resource="http://webprotege.stanford.edu/RCOc5PxVjq8KonbOELfHwvy"/>
+        <who rdf:resource="http://webprotege.stanford.edu/RBJaKppD43hYexNj8rjypH"/>
+        <who rdf:resource="http://webprotege.stanford.edu/RBhr45dKg97jgoNyJTVO2Ka"/>
+        <rdfs:label xml:lang="en">hyp</rdfs:label>
+    </owl:NamedIndividual>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.5.13) https://github.com/owlcs/owlapi -->
+
