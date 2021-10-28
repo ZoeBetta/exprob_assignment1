@@ -33,9 +33,9 @@
 void reachCallback( const std_msgs::Bool x);
 ros::Publisher hint_pub;
 
-char *hint[12]={"ID1/who/green", "ID1/what/candlestick","ID1/where/conservatory", 
+char *hint[13]={"ID1/who/green", "ID1/what/candlestick","ID1/where/conservatory", 
 	"ID2/who/plum", "ID2/what/dagger","ID2/where/lounge",
-	"ID3/who/mustard", "ID3/what/pipe","ID3/where/kitchen",
+	"ID3/who/mustard", "ID3/what/pipe","ID3/where/kitchen", "ID3/what/rope", 
 	"ID4/who/peacock", "ID4/what/revolver","ID4/where/library",
 	
 };
@@ -54,7 +54,7 @@ int i= randMToN(1,6);
 std_msgs::String msg;
 if (i>3)
 	{
-		index=randMToN(0,11);
+		index=randMToN(0,13);
 		msg.data=hint[index];
 		hint_pub.publish(msg);
 		std::cout << "oracolo presente" << std::endl;
@@ -63,7 +63,7 @@ if (i>3)
 
 bool oracle(exprob_assignment1::Oracle::Request &req, exprob_assignment1::Oracle::Response &res)
 	{
-		winner.data="ID2";
+		winner.data="ID4";
 		id_req.data= req.id;
 		if (id_req.data==winner.data)
 		{

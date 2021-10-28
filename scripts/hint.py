@@ -2,31 +2,29 @@ import copy
 import math
 import sys
 import time
-from logging import setLoggerClass
-from math import cos, pi, sin
-from os import access
-from re import X
+
 
 import geometry_msgs.msg
+from exprob_assignment1.msg import Hypothesis
 import numpy as np
 import rospy
 from std_msgs.msg import String
 from armor_msgs.msg import * 
 from armor_msgs.srv import * 
-from random import randint
 
 people=[]
 weapons=[]
 locations=[]
 armor_service = rospy.ServiceProxy('armor_interface_srv', ArmorDirective)
+pub=rospy.Publisher('/hypothesis', Hypothesis, queue_size=10)
 
 
 def main():
   #armor_library=Armor_Communication()
   rospy.init_node('Init')
   rospy.wait_for_service('armor_interface_srv')
-
   sub_odom = rospy.Subscriber('/hint', String, clbk_hint)
+  
   load_file()
   
   rospy.spin() 
@@ -43,7 +41,7 @@ def load_file():
         msg = armor_service(req)
         #res=ArmorDirectiveRes()
         res=msg.armor_response
-        print(res)
+        #print(res)
     except rospy.ServiceException as e:
         print(e)
         
@@ -128,10 +126,9 @@ def print_people():
         req.secondary_command_spec= 'CLASS'
         req.args= ['PERSON']
         msg = armor_service(req)
-        #res=ArmorDirectiveRes()
         res=msg.armor_response.queried_objects
         res_final=clean_queries(res)
-        print(res_final)
+        #print(res_final)
     except rospy.ServiceException as e:
         print(e)	
 
@@ -168,42 +165,132 @@ def check_if_received_before(data):
         if find==0:
             locations.append(data[2])
     return find            
-        
+
+def add_hypothesis(ID,class_type,name):
+    try:
+        req=ArmorDirectiveReq()
+        req.client_name= 'tutorial'
+        req.reference_name= 'ontoTest'
+        req.command= 'ADD'
+        req.primary_command_spec= 'OBJECTPROP'
+        req.secondary_command_spec= 'IND'
+        req.args= [class_type,ID,name]
+        msg = armor_service(req)
+        res=msg.armor_response
+        #print(res)
+    except rospy.ServiceException as e:
+        print(e)	
+
+def look_hypothesis(ID,class_type):
+    try:
+        req=ArmorDirectiveReq()
+        req.client_name= 'tutorial'
+        req.reference_name= 'ontoTest'
+        req.command= 'QUERY'
+        req.primary_command_spec= 'OBJECTPROP'
+        req.secondary_command_spec= 'IND'
+        req.args= [class_type,ID]
+        msg = armor_service(req)
+        res=msg.armor_response.queried_objects
+        res_final=clean_queries(res)
+        return res_final
+    except rospy.ServiceException as e:
+        print(e)   
+
+def check_in_ontology(ID,class_type,name):
+    try:
+        namef=[]
+        res_final=look_hypothesis(ID, class_type)
+        namef.append(name)
+        if res_final != namef:
+            #print('diverso aggiungi')
+            add_hypothesis(ID,class_type,name)
+            reason()
+    except rospy.ServiceException as e:
+        print(e)      
+
+def check_complete_consistent(ID):
+    #check completed
+    try:
+        completed=0
+        inconsistent=0
+        req=ArmorDirectiveReq()
+        req.client_name= 'tutorial'
+        req.reference_name= 'ontoTest'
+        req.command= 'QUERY'
+        req.primary_command_spec= 'IND'
+        req.secondary_command_spec= 'CLASS'
+        req.args= ['COMPLETED']
+        msg = armor_service(req)
+        res=msg.armor_response.queried_objects
+        res_final=clean_queries(res)
+        for i in range(len(res_final)):
+            if res_final[i]==ID:
+                completed=1
+        req=ArmorDirectiveReq()
+        req.client_name= 'tutorial'
+        req.reference_name= 'ontoTest'
+        req.command= 'QUERY'
+        req.primary_command_spec= 'IND'
+        req.secondary_command_spec= 'CLASS'
+        req.args= ['INCONSISTENT']
+        msg = armor_service(req)
+        res=msg.armor_response.queried_objects
+        res_final=clean_queries(res)
+        for i in range(len(res_final)):
+            if res_final[i]==ID:
+                inconsistent=1
+                if inconsistent==1:
+                    print('INCONSISTENT')  
+        if completed==1 and inconsistent==0:
+            return 1
+        else :
+            return 0
+    except rospy.ServiceException as e:
+        print(e)
+
 
 def clbk_hint(msg):
-	
-	s=str(msg.data)
-	hint_received=s.split('/')
-	find=check_if_received_before(hint_received)
-	if find==0:
-	    if hint_received[1]=='who':
-		    print(hint_received[2])
-		    initialize_person(hint_received[2])
-		    reason()
-		    disjoint('PERSON')
-		    reason()
-		    print_people()
-	    if hint_received[1]=='what':
-		    initialize_weapon(hint_received[2])
-		    reason()
-		    disjoint('WEAPON')
-		    reason()
-	    if hint_received[1]=='where':
-		    initialize_location(hint_received[2])
-		    reason()
-		    disjoint('LOCATION')
-		    reason()	    
-	    print('added')
-	if find==1:
-		print('already there')
-    
-	# check if already present in the ontology as a hypothesis
-	    # if yes stop
-	    # if not add an hypothesis
-	        # check if complete
-	        # if complete check if not inconsistent
-	            # if yes- send on the topic hypothesis the ID and the three strings separate
-	            #if no stop
+    s=str(msg.data)
+    hint_received=s.split('/')
+    print(hint_received[0])
+    find=check_if_received_before(hint_received)
+    if find==0:
+        if hint_received[1]=='who':
+            #print(hint_received[2])
+            initialize_person(hint_received[2])
+            reason()
+            disjoint('PERSON')
+            reason()
+            #print_people()
+        if hint_received[1]=='what':
+            initialize_weapon(hint_received[2])
+            reason()
+            disjoint('WEAPON')
+            reason()
+        if hint_received[1]=='where':
+            initialize_location(hint_received[2])
+            reason()
+            disjoint('LOCATION')
+            reason()	    
+        #print('added')
+    check_in_ontology(hint_received[0], hint_received[1], hint_received[2])
+    send=check_complete_consistent(hint_received[0])
+    if send==1:
+        print('send to robot')
+        message= Hypothesis()
+        message.ID=hint_received[0]
+        temp=look_hypothesis(hint_received[0], 'who')
+        message.who=temp[0]
+        temp=look_hypothesis(hint_received[0], 'what')
+        message.what=temp[0]
+        temp=look_hypothesis(hint_received[0], 'where')
+        message.where=temp[0]
+        print(message)
+        pub.publish(message)
+    else:
+        print (' not complete or not consistent')
+
     
 	
 	
