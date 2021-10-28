@@ -50,10 +50,11 @@ double randMToN(double M, double N)
 int main( int argc, char **argv)
 {
 	ros::init(argc, argv, "robot");
-	int index;
+	int index=0;
+	int temp=0;
 	int counter=0;
 	int behaviour=0;
-	char *ids={"ID3"};
+	char *ids={"ID2"};
 	ros::NodeHandle n;
 	ros::ServiceClient client = n.serviceClient<exprob_assignment1::MoveTo>("/move_to_server");
 	exprob_assignment1::MoveTo p;
@@ -64,11 +65,18 @@ int main( int argc, char **argv)
 	ros::ServiceClient client_or = n2.serviceClient<exprob_assignment1::Oracle>("/oracle");
 	exprob_assignment1::Oracle o;
 	
-	   while(ros::ok()){
+	while(ros::ok()){
    	ros::spinOnce();
+   	
+   	
 	if (behaviour==0)
-	{
-		index=randMToN(0,8);
+	{ 
+		temp=randMToN(0,8);
+		while (temp==index)
+		{
+		temp=randMToN(0,8);
+		}
+		index=temp;
 		p.request.x = posx[index];
 		p.request.y = posy[index];
 		std::cout << "\nGoing to the position: x= " << p.request.x << " y= " <<p.request.y << std::endl;
@@ -78,7 +86,7 @@ int main( int argc, char **argv)
     reach_pub.publish(msg);
    		sleep(1);
    		counter++;
-   		if (counter==6)
+   		if (counter>15)
    		{ behaviour=1;}
 	}
 
@@ -98,6 +106,7 @@ int main( int argc, char **argv)
 		if ( o.response.ok==false)
 		{
 			std::cout << "wrong hypothesis" << std::endl;
+			behaviour=0;
 		}
 		else {
 			std::cout << "correct hypothesis" << std::endl;

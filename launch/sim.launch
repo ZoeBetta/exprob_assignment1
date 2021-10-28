@@ -15,10 +15,11 @@
   <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
  <!--  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
 	args="-urdf -model robot1 -param robot_description -z 0.05"/> -->
-	
+	<node pkg="armor" type="execute" name="armor_service" args="it.emarolab.armor.ARMORMainService"/>
    <node name="robot" pkg="exprob_assignment1" type ="robot" output="screen"/>
    
-   <node name="move_to"  pkg="exprob_assignment1" type="move_to" output="screen"/>
+   <node name="move_to"  pkg="exprob_assignment1" type="move_to" />
    
-   <node name="oracle"  pkg="exprob_assignment1" type="oracle" output="screen"/>
+   <node name="oracle"  pkg="exprob_assignment1" type="oracle" />
+   <node name="hint"  pkg="exprob_assignment1" type="hint.py" output="screen"/>
 </launch>
