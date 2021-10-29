@@ -1,7 +1,7 @@
 /** @ package exprob_assignment1
 * 
 *  \file robot.cpp
-*  \brief 
+*  \brief This file implements the robot behaviour
 *
 *  \author Zoe Betta
 *  \version 1.0
@@ -9,18 +9,30 @@
 *  \details
 *   
 *  Subscribes to: <BR>
-*	 None
+*	 /hypothesis
 *
 *  Publishes to: <BR>
-*	 None
+*	 /reached
 *
 *  Services: <BR>
+*    None
+* 
+*  Client Services: <BR>
+*    /move_to
+*    /oracle
 *
 *  Action Services: <BR>
 *    None
 *
 *  Description: <BR>
-*    
+*    This node has two behaviours, in order to switch from the first behaviour
+*    a new message should be received on the topic /hypothesis. If no hypothesis
+*    is being detected the robot decides a random room to reach and calls
+*    the service /move_to in order to reach the desired position. When the
+*    position has been reached the node publishes on the topic /reached.
+*    If a new hypothesis arrives on the topic the robot moves to the Home
+*    position (0;0) and calls the service /oracle to find out if the received 
+*    hypothesis is the winning one.
 */
 
 #include "ros/ros.h"
@@ -39,27 +51,26 @@ char *loc[9]={ "Hall", "Lounge" , "Dining Room", "Kitchen", "Ballroom" , "Conser
 				"Biliard Room", "Library", "Study"};
 exprob_assignment1::Hypothesis message;
 int behaviour=0;
-//callback for the topic hypothesis
-// change behavior and save hypothesis on global variable
+
+// function declaration
+double randMToN(double M, double N);
+void hypothesisCallback( const exprob_assignment1::Hypothesis x);
 
 /**
- * \brief: It generates a random number
- * \param M: the lower bound of the interval I want to have the random number in
- * \param N: the upper bound of the interval I want to have the random number in
+ * \brief: main function
+ * \param : None
  * 
- * \return: the random number generated
+ * \return: 0
  * 
- * This function uses the library function rand() to generate a random number and
- *  then resizes it to be in the interval [M;N].
+ * This is the main function, it initializes the subscribers, publishers and
+ * server. It also initializes the the seed for the random generation of 
+ * numbers. If the behaviour is the first one the robot goes to a random 
+ * position and publishes on a topic whe nthe position has been reached. 
+ * If the behaviour is the second one it goes to home and then calls the /oracle 
+ * server to check if the hypothesis is correct. If it is correct the node 
+ * exits, if instead it is wrong the behaviour goes back to the previous one
+ * to search for more hints.
  */
-double randMToN(double M, double N)
-{     return M + (rand() / ( RAND_MAX / (N-M) ) ) ; }
-
-void hypothesisCallback( const exprob_assignment1::Hypothesis x)
-{ behaviour=1;
- message = x;	
-}
-
 int main( int argc, char **argv)
 {
 	ros::init(argc, argv, "robot");
@@ -67,7 +78,6 @@ int main( int argc, char **argv)
 	int temp=0;
 	int counter=0;
 
-	char *ids={"ID2"};
 	ros::NodeHandle n;
 	ros::ServiceClient client = n.serviceClient<exprob_assignment1::MoveTo>("/move_to_server");
 	exprob_assignment1::MoveTo p;
@@ -97,7 +107,6 @@ int main( int argc, char **argv)
 		p.request.y = posy[index];
 		std::cout << "\nGoing to the position: x= " << p.request.x << " y= " <<p.request.y <<"  " << loc[index] <<std::endl;
 		client.call(p);
-   		std::cout << "Position reached" << std::endl;
    		msg.data=true;
     reach_pub.publish(msg);
    		sleep(1);
@@ -129,4 +138,31 @@ int main( int argc, char **argv)
 	}
 	
 }
+}
+
+/**
+ * \brief: It generates a random number
+ * \param M: the lower bound of the interval I want to have the random number in
+ * \param N: the upper bound of the interval I want to have the random number in
+ * 
+ * \return: the random number generated
+ * 
+ * This function uses the library function rand() to generate a random number and
+ *  then resizes it to be in the interval [M;N].
+ */
+double randMToN(double M, double N)
+{     return M + (rand() / ( RAND_MAX / (N-M) ) ) ; }
+
+/**
+ * \brief: When new data are available on the topic /hypothesis.
+ * \param x: of type Hypothesis.msg 
+ * 
+ * \return: None
+ * 
+ * When new hypothesis are available the global variable behaviour switches
+ * to one and the data are saved on the global variable message.
+ */
+void hypothesisCallback( const exprob_assignment1::Hypothesis x)
+{ behaviour=1;
+ message = x;	
 }
