@@ -41,6 +41,7 @@ char *hint[13]={"ID1/who/green", "ID1/what/candlestick","ID1/where/conservatory"
 	
 };
 
+
 std_msgs::String winner;
 std_msgs::String id_req;
 double randMToN(double M, double N)
@@ -82,6 +83,7 @@ int main( int argc, char **argv)
 	ros::NodeHandle n;
 	ros::NodeHandle n1;
 	ros::NodeHandle n2;
+	
 	ros:: Subscriber reached= n.subscribe("reached", 1000, reachCallback);
 	hint_pub= n1.advertise<std_msgs::String>("/hint", 1000);
 	ros::ServiceServer service= n2.advertiseService("/oracle", oracle);

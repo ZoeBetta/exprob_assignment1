@@ -28,9 +28,7 @@ def main():
   rospy.init_node('Init')
   rospy.wait_for_service('armor_interface_srv')
   sub_odom = rospy.Subscriber('/hint', String, clbk_hint)
-  
   load_file()
-  
   rospy.spin() 
     
 def load_file():
@@ -43,54 +41,35 @@ def load_file():
         req.secondary_command_spec= ''
         req.args= ['/root/ros_ws/src/exprob_assignment1/cluedo_ontology.owl', 'http://www.emarolab.it/cluedo-ontology', 'true', 'PELLET', 'true']
         msg = armor_service(req)
-        #res=ArmorDirectiveRes()
         res=msg.armor_response
-        #print(res)
     except rospy.ServiceException as e:
         print(e)
         
-def initialize_person(person):
+def initialize(person, class_type):
     try:
+        class_id=find_type(class_type)
         req=ArmorDirectiveReq()
         req.client_name= 'tutorial'
         req.reference_name= 'ontoTest'
         req.command= 'ADD'
         req.primary_command_spec= 'IND'
         req.secondary_command_spec= 'CLASS'
-        req.args= [person,'PERSON']
+        req.args= [person, class_id]
         msg = armor_service(req)
-        #res=ArmorDirectiveRes()
         res=msg.armor_response
-        #print(res)
-        #print(person)
+        reason()
+        disjoint(class_id)
+        reason()
     except rospy.ServiceException as e:
         print(e)
-        
-def initialize_weapon(weapon):
-    try:
-        req=ArmorDirectiveReq()
-        req.client_name= 'tutorial'
-        req.reference_name= 'ontoTest'
-        req.command= 'ADD'
-        req.primary_command_spec= 'IND'
-        req.secondary_command_spec= 'CLASS'
-        req.args= [weapon,'WEAPON']
-        msg = armor_service(req)
-    except rospy.ServiceException as e:
-        print(e)
-        
-def initialize_location(location):
-    try:
-        req=ArmorDirectiveReq()
-        req.client_name= 'tutorial'
-        req.reference_name= 'ontoTest'
-        req.command= 'ADD'
-        req.primary_command_spec= 'IND'
-        req.secondary_command_spec= 'CLASS'
-        req.args= [location,'LOCATION']
-        msg = armor_service(req)
-    except rospy.ServiceException as e:
-        print(e)
+
+def find_type(class_type):
+    if class_type=='who':
+        return 'PERSON'
+    if class_type== 'what':
+        return 'WEAPON'
+    if class_type=='where':
+        return 'LOCATION' 
         
 def reason():
     try:
@@ -258,34 +237,17 @@ def clbk_hint(msg):
     already_done=0
     s=str(msg.data)
     hint_received=s.split('/')
-    print(hint_received[0])
+    rospy.set_param('ID', hint_received[0])
+    print(rospy.get_param('ID'))
     find=check_if_received_before(hint_received)
     if find==0:
-        if hint_received[1]=='who':
-            #print(hint_received[2])
-            initialize_person(hint_received[2])
-            reason()
-            disjoint('PERSON')
-            reason()
-            #print_people()
-        if hint_received[1]=='what':
-            initialize_weapon(hint_received[2])
-            reason()
-            disjoint('WEAPON')
-            reason()
-        if hint_received[1]=='where':
-            initialize_location(hint_received[2])
-            reason()
-            disjoint('LOCATION')
-            reason()	    
-        #print('added')
+        initialize(hint_received[2],hint_received[1])	    
     check_in_ontology(hint_received[0], hint_received[1], hint_received[2])
     send=check_complete_consistent(hint_received[0])
     if send==1:
         for i in range(len(hypothesis)):
             if hint_received[0]==hypothesis[i]:
                 already_done=1
-                print('già fatto')
         if already_done==0:
             print('send to robot')
             hypothesis.append(hint_received[0])
@@ -301,12 +263,6 @@ def clbk_hint(msg):
             pub.publish(message)
     else:
         print (' not complete or not consistent')
-
-    
-	
-	
-
-
 
 if __name__ == '__main__':
   main()        
