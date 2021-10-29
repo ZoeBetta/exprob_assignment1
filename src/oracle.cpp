@@ -29,6 +29,7 @@
 #include <cstdlib>
 #include "exprob_assignment1/Oracle.h"
 #include "string.h"
+#include <ctime>
 
 void reachCallback( const std_msgs::Bool x);
 ros::Publisher hint_pub;
@@ -84,11 +85,7 @@ int main( int argc, char **argv)
 	ros:: Subscriber reached= n.subscribe("reached", 1000, reachCallback);
 	hint_pub= n1.advertise<std_msgs::String>("/hint", 1000);
 	ros::ServiceServer service= n2.advertiseService("/oracle", oracle);
-	// when the server is called
-	// if ID==ID*
-	// return 1
-	// else 
-	// return 0 
+	srand(time(NULL));
 	ros:: spin();
 	return 0;
 }

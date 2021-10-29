@@ -1,3 +1,6 @@
+#! usr/bin/env python2
+
+
 import copy
 import math
 import sys
@@ -15,6 +18,7 @@ from armor_msgs.srv import *
 people=[]
 weapons=[]
 locations=[]
+hypothesis=[]
 armor_service = rospy.ServiceProxy('armor_interface_srv', ArmorDirective)
 pub=rospy.Publisher('/hypothesis', Hypothesis, queue_size=10)
 
@@ -251,6 +255,7 @@ def check_complete_consistent(ID):
 
 
 def clbk_hint(msg):
+    already_done=0
     s=str(msg.data)
     hint_received=s.split('/')
     print(hint_received[0])
@@ -277,17 +282,23 @@ def clbk_hint(msg):
     check_in_ontology(hint_received[0], hint_received[1], hint_received[2])
     send=check_complete_consistent(hint_received[0])
     if send==1:
-        print('send to robot')
-        message= Hypothesis()
-        message.ID=hint_received[0]
-        temp=look_hypothesis(hint_received[0], 'who')
-        message.who=temp[0]
-        temp=look_hypothesis(hint_received[0], 'what')
-        message.what=temp[0]
-        temp=look_hypothesis(hint_received[0], 'where')
-        message.where=temp[0]
-        print(message)
-        pub.publish(message)
+        for i in range(len(hypothesis)):
+            if hint_received[0]==hypothesis[i]:
+                already_done=1
+                print('già fatto')
+        if already_done==0:
+            print('send to robot')
+            hypothesis.append(hint_received[0])
+            message= Hypothesis()
+            message.ID=hint_received[0]
+            temp=look_hypothesis(hint_received[0], 'who')
+            message.who=temp[0]
+            temp=look_hypothesis(hint_received[0], 'what')
+            message.what=temp[0]
+            temp=look_hypothesis(hint_received[0], 'where')
+            message.where=temp[0]
+            print(message)
+            pub.publish(message)
     else:
         print (' not complete or not consistent')
 

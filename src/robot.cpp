@@ -30,10 +30,13 @@
 #include "exprob_assignment1/Hypothesis.h"
 #include "std_msgs/String.h"
 #include <string>
+#include <ctime>
 
 // global variables
 int posx[9]={0,10,10,10,0,-10,-10, -10, -10 };
 int posy[9]={10,10,0,-10,-10,-10,-5,5,10};
+char *loc[9]={ "Hall", "Lounge" , "Dining Room", "Kitchen", "Ballroom" , "Conservatory", 
+				"Biliard Room", "Library", "Study"};
 exprob_assignment1::Hypothesis message;
 int behaviour=0;
 //callback for the topic hypothesis
@@ -76,7 +79,7 @@ int main( int argc, char **argv)
 	exprob_assignment1::Oracle o;
 	ros::NodeHandle n3;
 	ros:: Subscriber reached= n3.subscribe("hypothesis", 1000, hypothesisCallback);
-	
+	srand(time(NULL));
 	
 	while(ros::ok()){
    	ros::spinOnce();
@@ -92,7 +95,7 @@ int main( int argc, char **argv)
 		index=temp;
 		p.request.x = posx[index];
 		p.request.y = posy[index];
-		std::cout << "\nGoing to the position: x= " << p.request.x << " y= " <<p.request.y << std::endl;
+		std::cout << "\nGoing to the position: x= " << p.request.x << " y= " <<p.request.y <<"  " << loc[index] <<std::endl;
 		client.call(p);
    		std::cout << "Position reached" << std::endl;
    		msg.data=true;
@@ -104,7 +107,7 @@ int main( int argc, char **argv)
 	{ 
 		p.request.x = 0;
 		p.request.y = 0;
-		std::cout << "\nGoing to the position: x= " << p.request.x << " y= " <<p.request.y << std::endl;
+		std::cout << "\nGoing to the position: x= " << p.request.x << " y= " <<p.request.y << "  Home"<< std::endl;
 		client.call(p);
    		std::cout << "Position reached" << std::endl;
    		msg.data=true;
@@ -118,6 +121,8 @@ int main( int argc, char **argv)
 		}
 		else {
 			std::cout << "correct hypothesis" << std::endl;
+			std::cout <<message.who<< " with the "<< message.what<<" in the "<<message.where<< std::endl;
+			
 			return 0;
 		}
 
