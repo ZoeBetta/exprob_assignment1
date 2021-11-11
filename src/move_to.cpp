@@ -40,41 +40,41 @@ bool move(exprob_assignment1::MoveTo::Request &req, exprob_assignment1::MoveTo::
  * \brief: main function
  * \param : None
  * 
- * \return: 0
+ * \return 0
  * 
  * This is the main function, it initializes the subscribers, publishers and
  * server. 
  */
 int main( int argc, char **argv)
 {
-	   ros::init(argc, argv, "move_to");
-       ros::NodeHandle n;
-    
-
+	ros::init(argc, argv, "move_to");
+	// definition of the node handles
+    ros::NodeHandle n;
+    // definition of the Server on the topic /move_to_server 
     ros::ServiceServer service= n.advertiseService("/move_to_server", move);
-       	   
-       	   
-    while(ros::ok()){
-   	ros::spinOnce();
-
-   	
-   	}
-
-   return 0;
+    // until ros is running correctly I wait for a request   	   
+    while(ros::ok())
+		{
+			ros::spinOnce();
+		}
+	return 0;
 }
 
 /**
  * \brief: it implements the move algorithm
  * \param &req : the request for the service, the x and y coordinates 
  * 
- * \return: &res : the answer that is sent back to the caller
+ * \return &res : the answer that is sent back to the caller
  * 
  * This function implements the move_to algorithm, it just implements a
  *  delay in this case.
  */
 bool move(exprob_assignment1::MoveTo::Request &req, exprob_assignment1::MoveTo::Response &res)
 	{
+		// when the server receives a request it sleeps for 1 second
+		// this behaviour is implemented to simulate the time to reach the next room
 		sleep(1);
+		// it sends the answer back to the client
 		res.ok=true;
 		return 1;
 	}

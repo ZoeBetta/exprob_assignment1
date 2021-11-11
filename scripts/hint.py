@@ -68,12 +68,16 @@ pub= None
 def main():
   global  armor_service, pub
   rospy.init_node('Init')
+  # definition of the Client for the Server on the topic armor_interface_srv
   armor_service = rospy.ServiceProxy('armor_interface_srv', ArmorDirective)
+  # definition of the publisher to the topic /hypothesis
   pub=rospy.Publisher('/hypothesis', Hypothesis, queue_size=10)
+  # waits for the service to be correctly running
   rospy.wait_for_service('armor_interface_srv')
+  # definition of the subscriber to the topic hint
   sub_odom = rospy.Subscriber('/hint', String, clbk_hint)
-
-  load_file()
+  # load the ontology from the ontology file
+  load_ontology()
   rospy.spin() 
 
 ##
@@ -92,23 +96,37 @@ def main():
 def clbk_hint(msg):
     global hypothesis
     already_done=0
+    # casting of the received message to the type string
     s=str(msg.data)
+    # split the received data in the correspondance of the character '/'
+    # it creates a list of strings
     hint_received=s.split('/')
+    # set the ROS parameter to the ID of the hint just received
     rospy.set_param('ID', hint_received[0])
     print(rospy.get_param('ID'))
+    # check if the hint was already received and so it is already saved in the ontology
     find=check_if_received_before(hint_received)
+    # if it was never received before
     if find==0:
-        add_instance(hint_received[2],hint_received[1])	    
+        # add to the ontology
+        add_instance(hint_received[2],hint_received[1])
+    # check if the hint is already in the hypothesis in the ontology	    
     check_in_ontology(hint_received[0], hint_received[1], hint_received[2])
+    # check if the hypothesis is complete and consistent
     send=check_complete_consistent(hint_received[0])
+    # if the hypothesis is both complete and consistent
     if send==1:
+        # check if the hypothesis has already been sent, the sent hypothesis are in a global list
         for i in range(len(hypothesis)):
             if hint_received[0]==hypothesis[i]:
                 already_done=1
+        # if the hypothesis has not already been sent, send it to the robot
         if already_done==0:
             print('send to robot')
+            # add the ID to the list of hypothesis sent
             hypothesis.append(hint_received[0])
             message= Hypothesis()
+            # initialize the hypothesis to send
             message.ID=hint_received[0]
             temp=look_hypothesis(hint_received[0], 'who')
             message.who=temp[0]
@@ -117,8 +135,10 @@ def clbk_hint(msg):
             temp=look_hypothesis(hint_received[0], 'where')
             message.where=temp[0]
             print(message)
+            # send on the topic hypothesis
             pub.publish(message)
     else:
+        # if the hypothesis is not complete or not consistent print to screen
         print (' not complete or not consistent')
 
 ##
@@ -129,15 +149,19 @@ def clbk_hint(msg):
 #	It loads the ontology from a file called cluedo_ontology in a specific
 #   path. Be careful if you want to change the path of the file it needs
 #   to be done here. The file is loaded by the proper call to the armor server.
-def load_file():
+def load_ontology():
     try:
+        # set the request for the armor server to load ontology
         req=ArmorDirectiveReq()
         req.client_name= 'tutorial'
         req.reference_name= 'ontoTest'
         req.command= 'LOAD'
         req.primary_command_spec= 'FILE'
         req.secondary_command_spec= ''
+        # IT IS NECESSARY TO CHANGE THE FOLLOWING LINE IF THE FILE IS NOT THERE
+        # CHANGE THE FIRST ARGUMENT WITH THE CORRECT PATH
         req.args= ['/root/ros_ws/src/exprob_assignment1/cluedo_ontology.owl', 'http://www.emarolab.it/cluedo-ontology', 'true', 'PELLET', 'true']
+        # send the message on the server
         msg = armor_service(req)
         res=msg.armor_response
     except rospy.ServiceException as e:
@@ -157,7 +181,9 @@ def load_file():
 #    the same class      
 def add_instance(name, class_type):
     try:
+        # from the class type (who, what,where) find the class (PERSON,LOCATION,WEAPON)
         class_id=find_type(class_type)
+        # set the request for the armor server to add an instance of a class
         req=ArmorDirectiveReq()
         req.client_name= 'tutorial'
         req.reference_name= 'ontoTest'
@@ -165,10 +191,14 @@ def add_instance(name, class_type):
         req.primary_command_spec= 'IND'
         req.secondary_command_spec= 'CLASS'
         req.args= [name, class_id]
+        # send the request
         msg = armor_service(req)
         res=msg.armor_response
+        # Use the reasoner of the ontlogy
         reason()
+        # Specify the element of the class are different, disjoint
         disjoint(class_id)
+        # Use the reasoner of the ontlogy
         reason()
     except rospy.ServiceException as e:
         print(e)
@@ -197,6 +227,7 @@ def find_type(class_type):
 #    and make implicit knowledge explicit       
 def reason():
     try:
+        # set the request for the armor server to use the reasoner
         req=ArmorDirectiveReq()
         req.client_name= 'tutorial'
         req.reference_name= 'ontoTest'
@@ -204,9 +235,9 @@ def reason():
         req.primary_command_spec= ''
         req.secondary_command_spec= ''
         req.args= []
+        # send the request
         msg = armor_service(req)
         res=msg.armor_response
-        #print(res)
     except rospy.ServiceException as e:
         print(e)		
  
@@ -218,15 +249,17 @@ def reason():
 #	This function calls the armor server and by sending specific commands it
 #   specifies that all entities inside the class passed as parameter are 
 #   disjoint and different   
-def disjoint(class_type):
+def disjoint(class_id):
     try:
+        # set the request for the armor server to use the reasoner
         req=ArmorDirectiveReq()
         req.client_name= 'tutorial'
         req.reference_name= 'ontoTest'
         req.command= 'DISJOINT'
         req.primary_command_spec= 'IND'
         req.secondary_command_spec= 'CLASS'
-        req.args= [class_type]
+        req.args= [class_id]
+        # send the request
         msg = armor_service(req)		 
     except rospy.ServiceException as e:
         print(e)        
@@ -238,13 +271,21 @@ def disjoint(class_type):
 # 	
 #	This function, for each element of the list passed as input it splits
 #   the strings at the char '#' and takes only what is after. Then it removes
-#   the last element of the remaing string.
+#   the last element of the remaing string. The received query is of type 
+#   <http://www.emarolab.it/cluedo-ontology#rope> and in this example
+#   we want to extract rope
 def clean_queries(query):
+    # for every element of the list received as input 
     for i in range(len(query)):
         temp=query[i]
+        # split at the character '#'
         temp=temp.split('#')
+        # save the lenght of the list returned after the split
         index=len(temp)
+        # take only the last element ( lenght -1 ) 
         temp=temp[index-1]
+        # saves it in the query, overwriting the one received and 
+        # eliminating the last character
         query[i]=temp[:-1]
     return query
 
@@ -263,23 +304,35 @@ def check_if_received_before(data):
     i=0
     j=0
     k=0
+    # if the data received is of class_type 'who'
     if data[1]=='who':
+        # checks every element of the array people to see if the data received is already saved there
         for i in range(len(people)):
             if people[i]==data[2]:
                 find=1;
+        # if it is not there
         if find==0:
+            # I add it to the global list
             people.append(data[2])
+    # if the data received is of class_type 'what'
     if data[1]=='what':
+        # checks every element of the array weapons to see if the data received is already saved there
         for j in range(len(weapons)):
             if weapons[j]==data[2]:
                 find=1;
+        # if it is not there
         if find==0:
+            # I add it to the global list
             weapons.append(data[2])
+    # if the data received is of class_type 'where'
     if data[1]=='where':
+        # checks every element of the array locations to see if the data received is already saved there
         for k in range(len(locations)):
             if locations[k]==data[2]:
                 find=1;
+        # if it is not there
         if find==0:
+            # I add it to the global list
             locations.append(data[2])
     return find            
 
@@ -294,6 +347,7 @@ def check_if_received_before(data):
 #   a given hypothesis. 
 def add_hypothesis(ID,class_type,name):
     try:
+        # set the request for the armor server to add an entity to an hypothesis
         req=ArmorDirectiveReq()
         req.client_name= 'tutorial'
         req.reference_name= 'ontoTest'
@@ -301,6 +355,7 @@ def add_hypothesis(ID,class_type,name):
         req.primary_command_spec= 'OBJECTPROP'
         req.secondary_command_spec= 'IND'
         req.args= [class_type,ID,name]
+        # send the request
         msg = armor_service(req)
         res=msg.armor_response
     except rospy.ServiceException as e:
@@ -316,6 +371,8 @@ def add_hypothesis(ID,class_type,name):
 #   by its ID one field, identified by the class_type.
 def look_hypothesis(ID,class_type):
     try:
+        # set the request for the armor server to check one field (identified by class_type)
+        # of an hypothesis (identified by an ID)
         req=ArmorDirectiveReq()
         req.client_name= 'tutorial'
         req.reference_name= 'ontoTest'
@@ -323,8 +380,11 @@ def look_hypothesis(ID,class_type):
         req.primary_command_spec= 'OBJECTPROP'
         req.secondary_command_spec= 'IND'
         req.args= [class_type,ID]
+        # send the request
         msg = armor_service(req)
+        # save the response of the server
         res=msg.armor_response.queried_objects
+        # clean the results by removing usless parts
         res_final=clean_queries(res)
         return res_final
     except rospy.ServiceException as e:
@@ -344,10 +404,15 @@ def look_hypothesis(ID,class_type):
 def check_in_ontology(ID,class_type,name):
     try:
         namef=[]
+        # it retrieves from the hypothesis ID the field identified by class_type
         res_final=look_hypothesis(ID, class_type)
+        # add the name to namef
         namef.append(name)
+        # if the name retrieved is different from the name received I add the hypothesis
+        # it adds it even if the retrieved field is empty
         if res_final != namef:
             add_hypothesis(ID,class_type,name)
+            # use the reasoner for the ontology
             reason()
     except rospy.ServiceException as e:
         print(e)      
@@ -362,10 +427,11 @@ def check_in_ontology(ID,class_type,name):
 #   the complete hypothesis and it checks if the searched hypothesis is in
 #   that list, it then does the same to check if the hypothesis is inconsistent.
 def check_complete_consistent(ID):
-    #check completed
+    #check if the ID hypothesis is completed
     try:
         completed=0
         inconsistent=0
+        # set the request for the armor server check all the completed hypothesis
         req=ArmorDirectiveReq()
         req.client_name= 'tutorial'
         req.reference_name= 'ontoTest'
@@ -373,12 +439,18 @@ def check_complete_consistent(ID):
         req.primary_command_spec= 'IND'
         req.secondary_command_spec= 'CLASS'
         req.args= ['COMPLETED']
+        # send the request
         msg = armor_service(req)
+        # save the response of the server
         res=msg.armor_response.queried_objects
+        # clean the results by removing usless parts
         res_final=clean_queries(res)
+        # for all the elements retrieved I check if their ID is equal
+        # to the one that needs to be checked
         for i in range(len(res_final)):
             if res_final[i]==ID:
                 completed=1
+        # set the request for the armor server check all the inconsistent hypothesis
         req=ArmorDirectiveReq()
         req.client_name= 'tutorial'
         req.reference_name= 'ontoTest'
@@ -386,12 +458,18 @@ def check_complete_consistent(ID):
         req.primary_command_spec= 'IND'
         req.secondary_command_spec= 'CLASS'
         req.args= ['INCONSISTENT']
+        # send the request
         msg = armor_service(req)
+        # save the response of the server
         res=msg.armor_response.queried_objects
+        # clean the results by removing usless parts
         res_final=clean_queries(res)
+        # for all the elements retrieved I check if their ID is equal
+        # to the one that needs to be checked
         for i in range(len(res_final)):
             if res_final[i]==ID:
                 inconsistent=1
+        # if the hypothesis is completed AND inconsistent return 1
         if completed==1 and inconsistent==0:
             return 1
         else :
