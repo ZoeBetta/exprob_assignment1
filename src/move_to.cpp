@@ -32,6 +32,7 @@
 #include "ros/ros.h"
 #include "exprob_assignment1/MoveTo.h"
 #include "std_msgs/Bool.h"
+#include <unistd.h>
 
 // function declaration
 bool move(exprob_assignment1::MoveTo::Request &req, exprob_assignment1::MoveTo::Response &res);
@@ -73,7 +74,7 @@ bool move(exprob_assignment1::MoveTo::Request &req, exprob_assignment1::MoveTo::
 	{
 		// when the server receives a request it sleeps for 1 second
 		// this behaviour is implemented to simulate the time to reach the next room
-		sleep(1);
+		usleep(500000);
 		// it sends the answer back to the client
 		res.ok=true;
 		return 1;

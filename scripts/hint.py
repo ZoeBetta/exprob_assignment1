@@ -122,7 +122,6 @@ def clbk_hint(msg):
                 already_done=1
         # if the hypothesis has not already been sent, send it to the robot
         if already_done==0:
-            print('send to robot')
             # add the ID to the list of hypothesis sent
             hypothesis.append(hint_received[0])
             message= Hypothesis()
@@ -137,9 +136,7 @@ def clbk_hint(msg):
             print(message)
             # send on the topic hypothesis
             pub.publish(message)
-    else:
-        # if the hypothesis is not complete or not consistent print to screen
-        print (' not complete or not consistent')
+
 
 ##
 #	\brief This function loads the ontology

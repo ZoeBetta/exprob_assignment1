@@ -43,6 +43,7 @@
 #include "std_msgs/String.h"
 #include <string>
 #include <ctime>
+#include <unistd.h>
 
 // global variables
 int posx[9]={0,10,10,10,0,-10,-10, -10, -10 };
@@ -125,7 +126,7 @@ int main( int argc, char **argv)
 					// publish the message
 					reach_pub.publish(msg);
 					// wait 1 second to simulate the looking around for a hint
-					sleep(1);
+					usleep(500000);
 				}
 			// if behaviour is equal to 1 I go to the home position and ask the oracle for the solution
 			if (behaviour==1)
@@ -145,7 +146,7 @@ int main( int argc, char **argv)
 					if ( o.response.ok==false)
 						{
 							// the hypothesis was the wrong one
-							std::cout << "wrong hypothesis" << std::endl;
+							std::cout << "Wrong hypothesis" << std::endl;
 							// go back to the behaviour 0, looking for hints
 							behaviour=0;
 						}
@@ -153,7 +154,7 @@ int main( int argc, char **argv)
 					else 
 						{
 							// print that the hypothesis was correct
-							std::cout << "correct hypothesis" << std::endl;
+							std::cout << "Correct hypothesis" << std::endl;
 							// print the hypothesis
 							std::cout <<message.who<< " with the "<< message.what<<" in the "<<message.where<< std::endl;
 							return 0;

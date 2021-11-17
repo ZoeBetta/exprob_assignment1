@@ -47,16 +47,16 @@
 ros::Publisher hint_pub;
 // BE CAREFUL IF YOU CHANGE THE NUMBER OF ELEMENTS CHANGE THE DIMENSION HERE
 // AND ALSO THE MAXIMUM NUMBER THAT CA BE GENERATED BELOW
-char *hint[31]={"ID1/who/green", "ID1/what/candlestick","ID1/where/conservatory", 
-	"ID2/who/Plum", "ID2/what/dagger","ID2/where/lounge",
-	"ID3/who/Mustard", "ID3/what/pipe","ID3/where/kitchen", "ID3/what/rope", 
-	"ID4/who/Peacock", "ID4/what/revolver","ID4/where/library",	
-	"ID5/who/Scarlet", "ID5/what/rope",	
-	"ID6/who/White", "ID6/what/spanner","ID6/where/hall", "ID6/where/study",	
-	"ID7/who/Plum", "ID7/what/dagger","ID7/where/ballroom",	
-	"ID8/who/Mustard", "ID8/what/candlestick","ID8/where/diningroom", "ID8/who/Scarlet",
-	"ID9/who/White", "ID9/what/pipe",	
-	"ID10/who/Green", "ID10/what/revolver","ID10/where/conservatory",		
+char *hint[31]={"ID1/who/Rev. Green", "ID1/what/Candlestick","ID1/where/Conservatory", 
+	"ID2/who/Prof. Plum", "ID2/what/Dagger","ID2/where/Lounge",
+	"ID3/who/Col. Mustard", "ID3/what/Lead Pipe","ID3/where/Kitchen", "ID3/what/Rope", 
+	"ID4/who/Mrs. Peacock", "ID4/what/Revolver","ID4/where/Library",	
+	"ID5/who/Miss. Scarlet", "ID5/what/Rope",	
+	"ID6/who/Mrs. White", "ID6/what/Spanner","ID6/where/Hall", "ID6/where/Study",	
+	"ID7/who/Prof. Plum", "ID7/what/Dagger","ID7/where/Ballroom",	
+	"ID8/who/Col. Mustard", "ID8/what/Candlestick","ID8/where/Dining Room", "ID8/who/Miss. Scarlet",
+	"ID9/who/Mrs. White", "ID9/what/Lead Pipe",	
+	"ID10/who/Rev. Green", "ID10/what/Revolver","ID10/where/Conservatory",		
 };
 
 //function declaration
@@ -160,7 +160,7 @@ bool oracle(exprob_assignment1::Oracle::Request &req, exprob_assignment1::Oracle
 		// here manually set the ID of the winning hint
 		// IF YOU WANT TO CHANGE IT BE SURE TO CHECK IT IS A COMPLETE AND CONSISTENT HINT
 		// THEN YOU CAN CHANGE THE winner.data VARIABLE
-		winner.data="ID4";
+		winner.data="ID7";
 		if (req.id==winner.data)
 		{
 			res.ok= true;
