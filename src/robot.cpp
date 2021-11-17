@@ -91,8 +91,8 @@ int main( int argc, char **argv)
     ros::Publisher reach_pub=n1.advertise<std_msgs::Bool>("/reached", 1000);
     // definition of the Client for the Server on the topic oracle
 	ros::ServiceClient client_or = n2.serviceClient<exprob_assignment1::Oracle>("/oracle");
-	// definition of the subscriber to the topic reached
-	ros:: Subscriber reached= n3.subscribe("hypothesis", 1000, hypothesisCallback);
+	// definition of the subscriber to the topic hypothesis
+	ros:: Subscriber hyp= n3.subscribe("hypothesis", 1000, hypothesisCallback);
 	// defining the seed for the random generation of numbers
 	// this is needed to avoid generating always the same numbers
 	// it takes as input the time of the system as seed
