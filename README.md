@@ -2,7 +2,11 @@
 ## BRIEF INTRODUCTION 
 This project implements the game of Cluedo played by a robot that has to explore an unknown environment searching for hints. The robot should move in every room to look for hints and when a new hypothesis is ready to be made it should return to the starting location and ask if the hypothesis is correct.
 ## SOFTWARE ARCHITECTURE
-![alt text](https://github.com/ZoeBetta/exprob_assignment1/blob/main/Architecture.jpg?raw=true)
+![architecture of the software](https://github.com/ZoeBetta/exprob_assignment1/blob/main/Architecture.jpg?raw=true)
+
+![state diagram for the program](https://github.com/ZoeBetta/exprob_assignment1/blob/main/RobotStateDiagram.jpg?raw=true)
+![sequence diagram for the program](https://github.com/ZoeBetta/exprob_assignment1/blob/main/SequenceDiagram.jpg?raw=true)
+
 ## INSTALLATION AND RUNNING PROCEDURE
 In order to run this code it is necessary to have istalled in the same workspace the package armor that allows for the comunication and the handling of the ontology. Once the package is in the workspace it is mandatory to build it using the instruction in the github repository at the following link:
 In particular it is necessary to run the following command ____ in the ___ folder.
@@ -23,6 +27,8 @@ Once completed all the previous steps to run the code it is sufficent to run in 
 ### POSSIBLE TECHNICAL IMPROVMENTS
 
 ## CONTACTS
-Author: Zoe Betta
-E-mail: zoe.betta@gmail.com
+Author: Zoe Betta  
+
+E-mail: zoe.betta@gmail.com  
+
 E-mail: s5063114@studenti.unige.it
