@@ -1,7 +1,5 @@
 var searchData=
 [
-  ['randmton_18',['randMToN',['../oracle_8cpp.html#a10f83119b77a8fbd085a5550955f85ff',1,'randMToN(double M, double N):&#160;oracle.cpp'],['../robot_8cpp.html#a10f83119b77a8fbd085a5550955f85ff',1,'randMToN(double M, double N):&#160;robot.cpp']]],
-  ['reachcallback_19',['reachCallback',['../oracle_8cpp.html#a0157d33f2ec6dabaf71e0d2233bab555',1,'oracle.cpp']]],
-  ['reason_20',['reason',['../hint_8py.html#a3a31721e8485ee2dca39efe7eb30a701',1,'hint']]],
-  ['robot_2ecpp_21',['robot.cpp',['../robot_8cpp.html',1,'']]]
+  ['oracle_17',['oracle',['../oracle_8cpp.html#a4b40339670ea4082bdfa7c53ef9f875e',1,'oracle.cpp']]],
+  ['oracle_2ecpp_18',['oracle.cpp',['../oracle_8cpp.html',1,'']]]
 ];
