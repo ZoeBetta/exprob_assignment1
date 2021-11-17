@@ -49,7 +49,8 @@ In the image above a schematic representation of the locations that are reachabl
   * Study
   * Ballroom
   * Dining Room
-  * Billiard Room
+  * Billiard Room  
+  
 All the possible hints that can be send are declared in the oracle node and there are hints whith the correct number of elements ( one person, one place, one weapon ), hint with more elements than required, hints with less elements than required. Hints are declared as a string that cointains the ID of the hint, the type of hint and the name of the specific instance, the elements are divided by the character '/'; for example "ID5/what/Rope".  
 In the following image we can see the normal output produed by the system while it is running:  
 ![Normal output behaviour](https://github.com/ZoeBetta/exprob_assignment1/blob/main/Images/NormalBehaviour.jpg?raw=true)  
