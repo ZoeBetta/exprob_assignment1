@@ -61,13 +61,16 @@ When an hypothesis is correct the system replies with correct hypothesis and pri
 I noticed that even if I had hints that were created with more than the correct amount of entities, if the system receives first three elements that are coherent ( one person, one weapon, one place ) it is able to send the hypothesis and check its correctness. For example the hint identified by ID8 is composed of: "ID8/who/Col. Mustard", "ID8/what/Candlestick","ID8/where/Dining Room", "ID8/who/Miss. Scarlet"; and so two possible suspects instead of one, it still sent the hypothesis and retrieves from it.  
 ![Output for wrong hypothesis](https://github.com/ZoeBetta/exprob_assignment1/blob/main/Images/ID8.jpg?raw=true)  
 ## WORKING HYPOTHESIS
-
-### SYSTEM'S FEATURES
-
+This system is semplified in order to have a structure that can be changed easily and improved as needed. It is assumed that the hints are from a finite set of possibilities that does not change in time, the winning hypothesis is fixed and can be changed only manually by working on the code. The node that should implement the movement to a location is simply a wait to simulate the motion without actually implementing it, we assume it takes some time to reach the room and that we don't have any obstacle. 
+### SYSTEM'S FEATURES 
+The system is really flexible and is able to handle random hints received at random times. It also handles possible mistakes. In order to have a faster system it also saves the hypothesis that have already been made and it avoids repeating them, this prevents the robot from moving to home pointlessly every time it receives a hint from an hypothesis that is already been checked.  
+This system implements the randomness by using the rand function and the srand function. The srand is used to change the seed of the random function, it takes as input the time of the system and so the seed changes at every run of the code. By changing the seed we can ensure that the random number that are generated each time are different and different situations can be tested by running the code multiple times. 
 ### SYSTEM LIMITATIONS
-
+The list of possible hints and the winning hypothesis is hard coded into the file oracle.cpp making it harder to change and modify if needed. Another limitation is that since the movement system is just a wait there is no way for the user to follow the movement of the robot in a graphical way. This makes the understanding of the problem harder to understand from a user point of view.  
+Another problem that arises is that when the robot finds the correct hypothesis it turns off and it is not able to generate a new correct hypothesis and keep looking for hints again. 
 ### POSSIBLE TECHNICAL IMPROVMENTS
-
+A future improvment will be for sure implementing the motion and provide the user with a graphical way to see where the robot is moving and what is the current state of the program in a more intuitive way.  
+Another improvment that can be made is the handling of the end of the robot process. There are two possible solutions: one is terminating in an automatic way all running nodes, this poses a problem on how to terminate the armor server that is started in the launch file. Another solution could be deleting all saved information from last game and start a new game with a new solution, this implies a way to check if the hypothesis requested is a complete and consistent one. 
 ## CONTACTS
 Author: Zoe Betta  
 
